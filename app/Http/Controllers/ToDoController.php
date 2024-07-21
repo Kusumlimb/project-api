@@ -34,31 +34,50 @@ class ToDoController extends Controller
         }
     
     public function delete($id){
-        ToDoModel::find($id)->delete();
-        return redirect(route("todo.home"));
+        $todo = ToDoModel::find($id);
+        if ($todo) {
+            $todo->delete();
+            return response()->json(['message' => 'Todo deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Todo not found'], 404);
+        }
     }
 
-    public function edit($id){
-        $todo=ToDoModel::find($id);
-        $data=compact('todo');
-        return view("update")->with($data);
-    }
+    // public function edit($id){
+    //     $todo=ToDoModel::find($id);
+    //     $data=compact('todo');
+    //     return view("update")->with($data);
+    // }
 
-    public function updateData(Request $request){
+    public function updateData(Request $request, $id){
+        
         $request->validate(
             [
-                'name'=>'required',
-                'work'=>'required',
-                'duedate'=>'required'
+                'name' => 'required',
+                'work' => 'required',
+                'due_date' => 'required'
             ]
-            );
-            $id = $request['id'];
-            $todo=ToDoModel::find($id);            
-            
-            $todo->name=$request['name'];
-            $todo->work=$request['work'];
-            $todo->duedate=$request['duedate'];
+
+        );
+
+        // dd($request->all());
+
+        $todo = ToDoModel::find($id);
+
+        if ($todo) {
+            $todo->name = $request->input('name');
+            $todo->work = $request->input('work');
+            $todo->due_date = $request->input('due_date');
             $todo->save();
-            return redirect(route("todo.home"));
+
+            return response()->json([
+                'message' => 'Todo updated successfully',
+                'todo' => $todo
+            ]);
+
+            // return redirect(route("todo.home"));
+        } else {
+            return response()->json(['message' => 'Todo not found'], 404);
+        }
     }
 }

@@ -15,5 +15,6 @@ class ToDoModel extends Model
         'name',
         'work',
         'due_date',
+        'image'
     ];
 }

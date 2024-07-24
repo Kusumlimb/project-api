@@ -7,6 +7,12 @@ use App\Models\ToDoModel; // using the todos model for database operations.
 
 class ToDoController extends Controller
 {
+
+    public function index()
+    {
+        $todos = ToDoModel::all();
+        return response()->json($todos);
+    }
    
     
     public function store(Request $request){
@@ -15,14 +21,21 @@ class ToDoController extends Controller
             [
                 'name'=>'required',
                 'work'=>'required',
-                'due_date'=>'required'
+                'due_date'=>'required',
+                'image'=>'required'
             ]
             );
+
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('images', 'public');
+            }
 
             $todo = ToDoModel::create([
                 'name' => $request->name,
                 'work' => $request->work,
-                'due_date' => $request->due_date
+                'due_date' => $request->due_date,
+                'image'=>$imagePath
             ]);
 
             return response()->json([
@@ -43,14 +56,10 @@ class ToDoController extends Controller
         }
     }
 
-    // public function edit($id){
-    //     $todo=ToDoModel::find($id);
-    //     $data=compact('todo');
-    //     return view("update")->with($data);
-    // }
+   
 
     public function updateData(Request $request, $id){
-        
+        // dd($request->all());
         $request->validate(
             [
                 'name' => 'required',

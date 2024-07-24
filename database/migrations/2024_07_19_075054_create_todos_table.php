@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('work');
             $table->string('due_date');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
